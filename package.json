@@ -1,6 +1,6 @@
 {
   "name": "@unic/factory-font-loader",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "lazy font loader",
   "scripts": {
     "start": "npm run dev",

@@ -139,20 +139,3 @@ export default (href = '/assets/css/fonts.css?v1') => {
 
   return instance;
 };
-//
-// constructor(href = '/assets/css/fonts.css?v1') {
-//   super();
-//   this.logger = this.log(FontLoader.name);
-//
-//   // once cached, the css file is stored on the client forever unless
-//   // the URL below is changed. Any change will invalidate the cache
-//   this.cssHref = href;
-//
-//   if (this._fileIsCached()) {
-//     this.logger('just use the cached version');
-//     this.injectFontsStylesheet();
-//   } else {
-//     this.logger('don\'t block the loading of the page; wait until it\'s done; then download fonts');
-//     this.on(window, 'load', this.injectFontsStylesheet.bind(this));
-//   }
-// }
