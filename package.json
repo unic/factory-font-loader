@@ -73,5 +73,10 @@
     "require": ["babel-register"],
     "babel": "inherit"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@unic/composite-logger":
+      "git+https://github.com/unic/composite-logger.git",
+    "@unic/composite-observer":
+      "git+https://github.com/unic/composite-observer.git"
+  }
 }
