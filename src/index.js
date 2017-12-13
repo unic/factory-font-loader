@@ -12,7 +12,7 @@ export default (href = '/assets/css/fonts.css?v1') => {
   const instance = {};
 
   // ** COMPOSITION **
-  Object.assign(instance, logger(), observer());
+  Object.assign(instance, logger('FontLoader'), observer());
 
   // ** PRIVATE FUNCTIONS **
 
@@ -133,7 +133,7 @@ export default (href = '/assets/css/fonts.css?v1') => {
       instance.log(
         "don't block the loading of the page; wait until it's done; then download fonts",
       );
-      instance.on(window, 'load', injectFontsStylesheet.bind(this));
+      instance.on(window, 'load', injectFontsStylesheet);
     }
   };
 
