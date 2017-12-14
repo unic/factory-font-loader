@@ -6,13 +6,12 @@
  */
 
 import logger from '@unic/composite-logger';
-import observer from '@unic/composite-observer';
 
 export default (href = '/assets/css/fonts.css?v1') => {
   const instance = {};
 
   // ** COMPOSITION **
-  Object.assign(instance, logger('FontLoader'), observer());
+  Object.assign(instance, logger('FontLoader'));
 
   // ** PRIVATE FUNCTIONS **
 
@@ -54,7 +53,6 @@ export default (href = '/assets/css/fonts.css?v1') => {
    */
   const createFontStylesheet = () => {
     const stylesheet = document.createElement('link');
-    instance.log('called createFontStyleSheet');
     stylesheet.href = href;
     stylesheet.rel = 'stylesheet';
     stylesheet.type = 'text/css';
@@ -72,7 +70,6 @@ export default (href = '/assets/css/fonts.css?v1') => {
    */
   const injectRawStyle = text => {
     const style = document.createElement('style');
-    instance.log('called injectRawStyle');
     // cater for IE8 which doesn't support style.innerHTML
     style.setAttribute('type', 'text/css');
 
@@ -90,7 +87,6 @@ export default (href = '/assets/css/fonts.css?v1') => {
    */
   const fetchAndStoreStylesheet = () => {
     const xhr = new XMLHttpRequest();
-    instance.log('called fetchAndStoreStylesheet');
 
     xhr.open('GET', href, true);
 
@@ -115,9 +111,7 @@ export default (href = '/assets/css/fonts.css?v1') => {
    */
   const injectFontsStylesheet = () => {
     // check if we can read from or write to localStorage
-    instance.log('supportLocalStorageAndHXR?', supportsLocalStorageAndXHR());
     if (supportsLocalStorageAndXHR()) {
-      instance.log('cache is valid?', cacheIsValid(href));
       if (cacheIsValid(href)) {
         // use cached version
         injectRawStyle(localStorage.fontCssCache);
@@ -132,7 +126,6 @@ export default (href = '/assets/css/fonts.css?v1') => {
   };
 
   instance.loadFonts = () => {
-    instance.log('file is cached?', fileIsCached());
     if (fileIsCached()) {
       instance.log('just use the cached version');
       injectFontsStylesheet();

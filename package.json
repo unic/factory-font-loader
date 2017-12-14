@@ -74,9 +74,6 @@
     "babel": "inherit"
   },
   "dependencies": {
-    "@unic/composite-logger":
-      "git+https://github.com/unic/composite-logger.git",
-    "@unic/composite-observer":
-      "git+https://github.com/unic/composite-observer.git"
+    "@unic/composite-logger": "git+https://github.com/unic/composite-logger.git"
   }
 }
