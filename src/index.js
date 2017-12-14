@@ -30,8 +30,11 @@ export default (href = '/assets/css/fonts.css?v1') => {
    * If browser supports localStorage and XMLHttpRequest
    * @return {boolean}
    */
-  const supportsLocalStorageAndXHR = () =>
-    !!(window.localStorage && window.XMLHttpRequest);
+  /* eslint-disable prettier/prettier */
+  const supportsLocalStorageAndXHR = () => (
+    !!(window.localStorage && window.XMLHttpRequest)
+  );
+  /* eslint-enable */
 
   /**
    * Determine whether a css file has been cached locally
@@ -51,7 +54,7 @@ export default (href = '/assets/css/fonts.css?v1') => {
    */
   const createFontStylesheet = () => {
     const stylesheet = document.createElement('link');
-
+    instance.log('createFontStyleSheet - should add link to head');
     stylesheet.href = href;
     stylesheet.rel = 'stylesheet';
     stylesheet.type = 'text/css';
@@ -69,7 +72,7 @@ export default (href = '/assets/css/fonts.css?v1') => {
    */
   const injectRawStyle = text => {
     const style = document.createElement('style');
-
+    instance.log('injectRawStyle should add style tag to head');
     // cater for IE8 which doesn't support style.innerHTML
     style.setAttribute('type', 'text/css');
 
@@ -87,6 +90,9 @@ export default (href = '/assets/css/fonts.css?v1') => {
    */
   const fetchAndStoreStylesheet = () => {
     const xhr = new XMLHttpRequest();
+    instance.log(
+      'fetchAndStoreStylesheet - should trigger XHR, call injectRawStyle and store response in cache',
+    );
 
     xhr.open('GET', href, true);
 
@@ -111,7 +117,9 @@ export default (href = '/assets/css/fonts.css?v1') => {
    */
   const injectFontsStylesheet = () => {
     // check if we can read from or write to localStorage
+    instance.log('supportLocalStorageAndHXR?', supportsLocalStorageAndXHR());
     if (supportsLocalStorageAndXHR()) {
+      instance.log('cache is valid?', cacheIsValid(href));
       if (cacheIsValid(href)) {
         // use cached version
         injectRawStyle(localStorage.fontCssCache);
@@ -126,6 +134,7 @@ export default (href = '/assets/css/fonts.css?v1') => {
   };
 
   instance.loadFonts = () => {
+    instance.log('file is cached?', fileIsCached());
     if (fileIsCached()) {
       instance.log('just use the cached version');
       injectFontsStylesheet();
