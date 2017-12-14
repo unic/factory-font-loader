@@ -18,26 +18,17 @@ import createFontLoader from '@unic/factory-font-loader';
 const createFontLoader = require('@unic/factory-font-loader').default;
 ```
 
-## Usage
+## Usage/Quickstart
 ```js
+
 import createFontLoader from '@unic/factory-font-loader';
 
-const fontLoader = createFontLoader('path/to/stylesheet.css');
-fontLoader.loadFonts();
-```
+// to load fonts on instatiation
+const fontLoader = createFontLoader({ href: 'path/to/stylesheet.css' });
 
-**Important**: In further examples and the API we'll just infer that you've already generated your new object with the composite applied to it and will not give any more examples on how to do that.
+// to load fonts from somewhere else
+const fontLoader = createFontLoader({ href: 'path/to/stylesheet.css', loadFonts: false })
 
-**Examples**
-```js
-// Applying the composite to a new object literal
-const obj = Object.assign({}, factoryFontLoader('path/to/stylesheet.css'));
-
-// Equivalent with lodash.merge
-const obj = _.merge({}, factoryFontLoader('path/to/stylesheet.css'));
-
-// Just use it as a
-const obj = factoryFontLoader('path/to/stylesheet.css');
 ```
 
 ## API
@@ -58,9 +49,23 @@ Load web fonts asynchronously. Checks if browser support localStorage.
 Checks if there is a valid cached version of web font in localStorage. If so, loads fonts from cache.
 If not, loads fonts after `DOMContentLoaded` event.
 
+**Parameter**
+* options, <code>obj</code>
+
+| Key | Type | Default | Value | Description |
+| --- | --- | --- | --- | --- |
+| href | string | undefined | <code>path/to/fonts.css</code> | must be provided when instantiating or you will get an error |
+| loadFonts | boolean | true | <code>true</code> | calls method loadFonts on instantiation so you don't have to. Should be false if you are going to load fonts from a different place than you instantiate. |
+
+**Example**
+```js
+const fontLoader = createFontLoader({
+  href: 'path/to/font.css'
+});
+```
+
 TODO:
-* expand to use Flash of Faux Text (FOFT) or Flash of Unstyled Text (FOUT)
-  ** depends on ability to subset fonts
+* expand to use Flash of Faux Text (FOFT)
 
 ## License
 

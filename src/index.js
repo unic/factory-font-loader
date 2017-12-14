@@ -7,13 +7,24 @@
 
 import logger from '@unic/composite-logger';
 
-export default (href = '/assets/css/fonts.css?v1') => {
+const defaultOptions = {
+  loadFonts: true,
+};
+
+export default (
+  { href = false, hrefPartial = false, loadFonts = defaultOptions.loadFonts } = {}
+) => {
   const instance = {};
+  const LOGGER_NAME = 'FontLoader';
 
-  // ** COMPOSITION **
-  Object.assign(instance, logger('FontLoader'));
+  if (!href) {
+    throw new Error('Please provide a path to your font stylesheet');
+  }
 
-  // ** PRIVATE FUNCTIONS **
+  // ** Composition **
+  Object.assign(instance, logger(LOGGER_NAME));
+
+  // ** Private Functions **
 
   /**
    * If we have the fonts in localStorage or if we've cached them using the native browser cache
@@ -21,19 +32,21 @@ export default (href = '/assets/css/fonts.css?v1') => {
    */
   /* eslint-disable prettier/prettier */
   const fileIsCached = () => (
-    (window.localStorage && localStorage.fontCssCache) || document.cookie.indexOf('fontCssCache') > -1
+    localStorage.fontCssCache || document.cookie.indexOf('fontCssCache') > -1
   );
   /* eslint-enable */
 
   /**
-   * If browser supports localStorage and XMLHttpRequest
+   * check if support support localStorage
    * @return {boolean}
    */
-  /* eslint-disable prettier/prettier */
-  const supportsLocalStorageAndXHR = () => (
-    !!(window.localStorage && window.XMLHttpRequest)
-  );
-  /* eslint-enable */
+  const supportsLocalStorage = () => window.localStorage;
+
+  /**
+   * If browser supports XMLHttpRequest
+   * @return {boolean}
+   */
+  const supportsXHR = () => window.XMLHttpRequest;
 
   /**
    * Determine whether a css file has been cached locally
@@ -43,8 +56,8 @@ export default (href = '/assets/css/fonts.css?v1') => {
    * @return {Boolean}
    */
   /* eslint-disable prettier/prettier */
-  const cacheIsValid = cssHref => (
-    localStorage.fontCssCache && localStorage.fontCssCacheFile === cssHref
+  const cacheIsValid = hrefString => (
+    localStorage.fontCssCache && localStorage.fontCssCacheFile === hrefString
   );
   /* eslint-enable */
 
@@ -85,57 +98,53 @@ export default (href = '/assets/css/fonts.css?v1') => {
   /**
    * fetch stylesheet and store it in localStorage
    */
-  const fetchAndStoreStylesheet = () => {
-    const xhr = new XMLHttpRequest();
+  const fetchAndInjectStylesheet = src =>
+    new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
 
-    xhr.open('GET', href, true);
+      xhr.open('GET', src, true);
 
-    // cater for IE8 which does not support addEventListener or attachEvent on XMLHttpRequest
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        // once we have the content, quickly inject the css rules
+      xhr.onload = () => {
+        instance.log('inject the raw style from xhr', src);
         injectRawStyle(xhr.responseText);
+        return resolve(xhr.responseText);
+      };
 
-        // and cache the text content for further use
-        // notice that this overwrites anything that might have already been previously cached
-        localStorage.fontCssCache = xhr.responseText;
-        localStorage.fontCssCacheFile = href;
-      }
-    };
+      xhr.onerror = () => reject(xhr.statusText);
 
-    xhr.send();
-  };
+      xhr.send();
+    });
 
-  /**
-   * Inject Stylesheet
-   */
-  const injectFontsStylesheet = () => {
-    // check if we can read from or write to localStorage
-    if (supportsLocalStorageAndXHR()) {
-      if (cacheIsValid(href)) {
-        // use cached version
-        injectRawStyle(localStorage.fontCssCache);
-      } else {
-        // fetch stylesheet and store it in cache for next tie
-        fetchAndStoreStylesheet();
-      }
-    } else {
-      // create stylesheet
-      createFontStylesheet();
-    }
-  };
+  // ** Public Functions **
 
   instance.loadFonts = () => {
-    if (fileIsCached()) {
-      instance.log('just use the cached version');
-      injectFontsStylesheet();
+    if (supportsLocalStorage() && supportsXHR()) {
+      if (fileIsCached() && cacheIsValid(href)) {
+        // inject the cached stylesheet
+        instance.log('just use the cached version');
+        injectRawStyle(localStorage.fontCssCache);
+        return;
+      } else if (hrefPartial) {
+        // fetch and inject the partial stylesheet
+        instance.log('Load a single font-face first.');
+        fetchAndInjectStylesheet(hrefPartial);
+      }
+
+      // fetch all the fonts after the DOM content is loaded
+      instance.log('Wait until page is loaded and then download all the fonts');
+      document.addEventListener('DOMContentLoaded', () => {
+        fetchAndInjectStylesheet(href).then(text => {
+          localStorage.fontCssCache = text;
+          localStorage.fontCssCacheFile = href;
+        });
+      });
     } else {
-      instance.log(
-        "don't block the loading of the page; wait until it's done; then download fonts",
-      );
-      document.addEventListener('DOMContentLoaded', injectFontsStylesheet);
+      document.addEventListener('DOMContentLoaded', createFontStylesheet);
     }
   };
+
+  // load the fonts on instantiation
+  if (loadFonts) instance.loadFonts();
 
   return instance;
 };
