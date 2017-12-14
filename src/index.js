@@ -54,7 +54,7 @@ export default (href = '/assets/css/fonts.css?v1') => {
    */
   const createFontStylesheet = () => {
     const stylesheet = document.createElement('link');
-    instance.log('createFontStyleSheet - should add link to head');
+    instance.log('called createFontStyleSheet');
     stylesheet.href = href;
     stylesheet.rel = 'stylesheet';
     stylesheet.type = 'text/css';
@@ -72,7 +72,7 @@ export default (href = '/assets/css/fonts.css?v1') => {
    */
   const injectRawStyle = text => {
     const style = document.createElement('style');
-    instance.log('injectRawStyle should add style tag to head');
+    instance.log('called injectRawStyle');
     // cater for IE8 which doesn't support style.innerHTML
     style.setAttribute('type', 'text/css');
 
@@ -90,9 +90,7 @@ export default (href = '/assets/css/fonts.css?v1') => {
    */
   const fetchAndStoreStylesheet = () => {
     const xhr = new XMLHttpRequest();
-    instance.log(
-      'fetchAndStoreStylesheet - should trigger XHR, call injectRawStyle and store response in cache',
-    );
+    instance.log('called fetchAndStoreStylesheet');
 
     xhr.open('GET', href, true);
 
@@ -142,7 +140,7 @@ export default (href = '/assets/css/fonts.css?v1') => {
       instance.log(
         "don't block the loading of the page; wait until it's done; then download fonts",
       );
-      instance.on(window, 'load', injectFontsStylesheet);
+      document.addEventListener('DOMContentLoaded', injectFontsStylesheet);
     }
   };
 
