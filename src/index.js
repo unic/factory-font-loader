@@ -12,7 +12,7 @@ const defaultOptions = {
 };
 
 export default (
-  { href = false, hrefPartial = false, loadFonts = defaultOptions.loadFonts } = {}
+  { href = false, hrefPartial = false, loadFonts = defaultOptions.loadFonts } = {},
 ) => {
   const instance = {};
   const LOGGER_NAME = 'FontLoader';
@@ -40,13 +40,13 @@ export default (
    * check if support support localStorage
    * @return {boolean}
    */
-  const supportsLocalStorage = () => window.localStorage;
+  const supportsLocalStorage = () => window && window.localStorage;
 
   /**
    * If browser supports XMLHttpRequest
    * @return {boolean}
    */
-  const supportsXHR = () => window.XMLHttpRequest;
+  const supportsXHR = () => window && window.XMLHttpRequest;
 
   /**
    * Determine whether a css file has been cached locally
@@ -133,10 +133,12 @@ export default (
       // fetch all the fonts after the DOM content is loaded
       instance.log('Wait until page is loaded and then download all the fonts');
       document.addEventListener('DOMContentLoaded', () => {
-        fetchAndInjectStylesheet(href).then(text => {
-          localStorage.fontCssCache = text;
-          localStorage.fontCssCacheFile = href;
-        });
+        fetchAndInjectStylesheet(href)
+          .then(text => {
+            localStorage.fontCssCache = text;
+            localStorage.fontCssCacheFile = href;
+          })
+          .catch(msg => instance.log('error', msg));
       });
     } else {
       document.addEventListener('DOMContentLoaded', createFontStylesheet);

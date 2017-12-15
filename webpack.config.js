@@ -2,12 +2,16 @@ const webpack = require('webpack');
 const path = require('path');
 
 const config = {
-  entry: './src/index.js',
+  entry: {
+    factoryFontLoader: './src/index.js',
+    QUnit: './node_modules/qunit/qunit/qunit.js',
+    tests: './src/index.spec.js',
+  },
   output: {
     library: 'factory-font-loader',
     libraryTarget: 'umd',
     path: path.resolve(__dirname, 'dist'),
-    filename: 'factory-font-loader.js',
+    filename: '[name].js',
   },
   module: {
     rules: [
