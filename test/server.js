@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 
-var app = express();
+const app = express();
 
 app.use('/test', express.static('test'));
 app.use('/dist', express.static('dist'));

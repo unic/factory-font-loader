@@ -3,7 +3,7 @@ const path = require('path');
 
 const config = {
   entry: {
-    factoryFontLoader: './src/index.js',
+    'factory-font-loader': './src/index.js',
     tests: './src/index.spec.js',
   },
   output: {

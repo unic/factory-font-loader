@@ -30,21 +30,18 @@ export default (
    * If we have the fonts in localStorage or if we've cached them using the native browser cache
    * @return {Boolean}
    */
-  /* eslint-disable prettier/prettier */
-  const fileIsCached = () => (
-    localStorage.fontCssCache || document.cookie.indexOf('fontCssCache') > -1
-  );
-  /* eslint-enable */
+  const fileIsCached = () =>
+    localStorage.fontCssCache || document.cookie.indexOf('fontCssCache') > -1;
 
   /**
    * check if support support localStorage
-   * @return {boolean}
+   * @return {Boolean}
    */
   const supportsLocalStorage = () => window && window.localStorage;
 
   /**
    * If browser supports XMLHttpRequest
-   * @return {boolean}
+   * @return {Boolean}
    */
   const supportsXHR = () => window && window.XMLHttpRequest;
 
@@ -55,11 +52,8 @@ export default (
    * @param  {String} cssHref	- CSS path to check vs the cached one
    * @return {Boolean}
    */
-  /* eslint-disable prettier/prettier */
-  const cacheIsValid = hrefString => (
-    localStorage.fontCssCache && localStorage.fontCssCacheFile === hrefString
-  );
-  /* eslint-enable */
+  const cacheIsValid = hrefString =>
+    localStorage.fontCssCache && localStorage.fontCssCacheFile === hrefString;
 
   /**
    * add a link to the font stylesheet
