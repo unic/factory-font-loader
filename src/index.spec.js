@@ -1,8 +1,14 @@
-(() => {
-  QUnit.module('Module A');
+import createFactoryFontLoader from './index';
 
-  QUnit.test('first test within module', assert => {
-    assert.ok(false, 'a dummy');
+(() => {
+  QUnit.module('Factory Font Loader Tests');
+
+  QUnit.test('factory font loader should execute without error', assert => {
+    // test if function does not raise exception in QUnit
+    // https://stackoverflow.com/questions/9822400/how-to-assert-that-a-function-does-not-raise-an-exception
+
+    const fontLoader = createFactoryFontLoader({ href: 'path/to/css' });
+    assert.ok(true, 'My function does not crash');
   });
 })();
 

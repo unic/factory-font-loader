@@ -4,7 +4,6 @@ const path = require('path');
 const config = {
   entry: {
     factoryFontLoader: './src/index.js',
-    QUnit: './node_modules/qunit/qunit/qunit.js',
     tests: './src/index.spec.js',
   },
   output: {

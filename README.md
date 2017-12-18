@@ -64,8 +64,17 @@ const fontLoader = createFontLoader({
 });
 ```
 
-TODO:
-* expand to use Flash of Faux Text (FOFT)
+## Testing
+
+This package is meant to run in the browser. So, in order to test it, we need to simulate a browser environment.
+
+Start express server to host QUnit tests
+
+<code>npm run testserver</code>
+
+Run the QUnit tests in puppeteer (headless chrome)
+
+<code>npm run browsertest</code>
 
 ## License
 

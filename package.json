@@ -11,7 +11,10 @@
     "preversion": "npm run lint && npm test",
     "version": "npm run build && git add -A dist",
     "postversion": "git push && git push --tags",
-    "test": "ava"
+    "test": "ava",
+    "testserver": "node test/server.js",
+    "browsertest":
+      "npm run build && npx qunit-puppeteer http://localhost:3000/qunit"
   },
   "main": "dist/factory-font-loader.js",
   "module": "./src/index.js",
@@ -42,8 +45,6 @@
     "husky": "0.14.3",
     "lint-staged": "6.0.0",
     "prettier": "1.9.1",
-    "puppeteer": "^0.13.0",
-    "qunit": "^2.4.1",
     "qunit-puppeteer": "^1.0.1",
     "webpack": "3.10.0"
   },
