@@ -5,8 +5,10 @@
  * @copyright Unic AG
  */
 
+import 'whatwg-fetch';
 import logger from '@unic/composite-logger';
 
+const LOGGER_NAME = 'FontLoader';
 const defaultOptions = {
   loadFonts: true,
 };
@@ -15,7 +17,6 @@ export default (
   { href = false, hrefPartial = false, loadFonts = defaultOptions.loadFonts } = {},
 ) => {
   const instance = {};
-  const LOGGER_NAME = 'FontLoader';
 
   if (!href) {
     throw new Error('Please provide a path to your font stylesheet');
@@ -38,12 +39,6 @@ export default (
    * @return {Boolean}
    */
   const supportsLocalStorage = () => window && window.localStorage;
-
-  /**
-   * If browser supports XMLHttpRequest
-   * @return {Boolean}
-   */
-  const supportsXHR = () => window && window.XMLHttpRequest;
 
   /**
    * Determine whether a css file has been cached locally
@@ -90,29 +85,44 @@ export default (
   };
 
   /**
-   * fetch stylesheet and store it in localStorage
+   * checkResponse
+   * @description check if fetch was successful
+   * @param  {Promise} response
+   * @return {Promise}          return the response if it is 'OK' or throw error
    */
-  const fetchAndInjectStylesheet = src =>
-    new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
+  const checkResponse = response => {
+    if (response.status >= 200 && response.status < 300) {
+      return response;
+    }
+    const error = new Error(response.statusText);
+    error.response = response;
+    throw error;
+  };
 
-      xhr.open('GET', src, true);
+  /**
+   * parseResponse
+   * @description extract data from response
+   * @param  {Promise} response
+   * @return {String}          return data from response in a string
+   */
+  const parseResponse = response => response.text();
 
-      xhr.onload = () => {
-        instance.log('inject the raw style from xhr', src);
-        injectRawStyle(xhr.responseText);
-        return resolve(xhr.responseText);
-      };
-
-      xhr.onerror = () => reject(xhr.statusText);
-
-      xhr.send();
-    });
+  /**
+   * cacheResponse
+   * @description store response in browser cache for later use and pass it through to next handler
+   * @param  {String} text font stylesheet
+   * @return {String}      font stylesheet
+   */
+  const cacheResponse = text => {
+    localStorage.fontCssCache = text;
+    localStorage.fontCssCacheFile = href;
+    return text;
+  };
 
   // ** Public Functions **
 
   instance.loadFonts = () => {
-    if (supportsLocalStorage() && supportsXHR()) {
+    if (supportsLocalStorage()) {
       if (fileIsCached() && cacheIsValid(href)) {
         // inject the cached stylesheet
         instance.log('just use the cached version');
@@ -121,17 +131,21 @@ export default (
       } else if (hrefPartial) {
         // fetch and inject the partial stylesheet
         instance.log('Load a single font-face first.');
-        fetchAndInjectStylesheet(hrefPartial);
+        fetch(hrefPartial)
+          .then(response => checkResponse(response))
+          .then(response => parseResponse(response))
+          .then(text => injectRawStyle(text))
+          .catch(msg => instance.log('error', msg));
       }
 
       // fetch all the fonts after the DOM content is loaded
       instance.log('Wait until page is loaded and then download all the fonts');
       document.addEventListener('DOMContentLoaded', () => {
-        fetchAndInjectStylesheet(href)
-          .then(text => {
-            localStorage.fontCssCache = text;
-            localStorage.fontCssCacheFile = href;
-          })
+        fetch(href)
+          .then(response => checkResponse(response))
+          .then(response => parseResponse(response))
+          .then(text => cacheResponse(text))
+          .then(text => injectRawStyle(text))
           .catch(msg => instance.log('error', msg));
       });
     } else {

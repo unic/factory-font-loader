@@ -13,8 +13,7 @@
     "postversion": "git push && git push --tags",
     "test": "ava",
     "testserver": "node test/server.js",
-    "browsertest":
-      "npm run build && npx qunit-puppeteer http://localhost:3000/qunit"
+    "browsertest": "npm run build && npx qunit-puppeteer http://localhost:3000/qunit"
   },
   "main": "dist/factory-font-loader.js",
   "module": "./src/index.js",
@@ -22,7 +21,10 @@
     "type": "git",
     "url": "git+https://github.com/unic/factory-font-loader.git"
   },
-  "keywords": ["composite", "factory-font-loader"],
+  "keywords": [
+    "composite",
+    "factory-font-loader"
+  ],
   "author": "Ben Sonley",
   "license": "Apache-2.0",
   "bugs": {
@@ -49,11 +51,20 @@
     "webpack": "3.10.0"
   },
   "lint-staged": {
-    "*.js": ["eslint --fix", "git add"],
-    "*.json": ["prettier --write", "git add"]
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "*.json": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "eslintConfig": {
-    "extends": ["airbnb-base", "prettier"],
+    "extends": [
+      "airbnb-base",
+      "prettier"
+    ],
     "env": {
       "browser": true,
       "node": true
@@ -68,18 +79,27 @@
         }
       ]
     },
-    "plugins": ["prettier"]
+    "plugins": [
+      "prettier"
+    ]
   },
   "ava": {
-    "files": ["src/**/*.spec.js"],
-    "source": ["src/**/*.js"],
+    "files": [
+      "src/**/*.spec.js"
+    ],
+    "source": [
+      "src/**/*.js"
+    ],
     "concurrency": 5,
     "failFast": true,
     "powerAssert": true,
-    "require": ["babel-register"],
+    "require": [
+      "babel-register"
+    ],
     "babel": "inherit"
   },
   "dependencies": {
-    "@unic/composite-logger": "git+https://github.com/unic/composite-logger.git"
+    "@unic/composite-logger": "git+https://github.com/unic/composite-logger.git",
+    "whatwg-fetch": "2.0.3"
   }
 }
